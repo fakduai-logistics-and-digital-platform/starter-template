@@ -58,17 +58,19 @@ npx wrangler login
 npx wrangler d1 create wellness-db
 ```
 
-คัดลอก `database_id` ที่ได้ ไปแทนค่าใน `backend/wrangler.jsonc`:
-
-```jsonc
-"d1_databases": [
-  {
-    "binding": "DB",
-    "database_name": "wellness-db",
-    "database_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"  // ← ใส่ตรงนี้
-  }
-]
+จะได้ output ประมาณนี้:
 ```
+✅ Successfully created DB 'wellness-db'
+database_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+```
+
+**สำหรับ Local Dev** — แทนค่าใน `backend/wrangler.jsonc`:
+```jsonc
+"database_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+```
+
+**สำหรับ GitHub Actions** — เพิ่ม Secret ชื่อ `D1_DATABASE_ID` ค่าคือ `database_id` ที่ได้  
+(workflow จะ inject ให้อัตโนมัติก่อน deploy)
 
 ### 4. สร้าง KV Namespace
 
@@ -76,16 +78,18 @@ npx wrangler d1 create wellness-db
 npx wrangler kv namespace create CACHE
 ```
 
-คัดลอก `id` ที่ได้ ไปแทนค่าใน `backend/wrangler.jsonc`:
-
-```jsonc
-"kv_namespaces": [
-  {
-    "binding": "KV",
-    "id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"  // ← ใส่ตรงนี้
-  }
-]
+จะได้ output ประมาณนี้:
 ```
+✅ Successfully created KV namespace 'CACHE'
+id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+```
+
+**สำหรับ Local Dev** — แทนค่าใน `backend/wrangler.jsonc`:
+```jsonc
+"id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+```
+
+**สำหรับ GitHub Actions** — เพิ่ม Secret ชื่อ `KV_NAMESPACE_ID` ค่าคือ `id` ที่ได้
 
 ### 5. รัน migration สร้าง tables
 
@@ -367,11 +371,16 @@ npx wrangler pages deploy dist --project-name=wellness-frontend --branch=main
 
 ไปที่ **GitHub repo → Settings → Secrets and variables → Actions** แล้วเพิ่ม:
 
-| Secret | ค่า | ใช้ใน |
+| Secret | วิธีหาค่า | ใช้ใน |
 |---|---|---|
-| `CLOUDFLARE_API_TOKEN` | API Token จาก [Cloudflare Dashboard](https://dash.cloudflare.com/profile/api-tokens) (ต้องมี permission: Workers, D1, Pages) | ทั้งคู่ |
-| `CLOUDFLARE_ACCOUNT_ID` | Account ID จาก Cloudflare Dashboard (มุมขวาบน) | ทั้งคู่ |
+| `CLOUDFLARE_API_TOKEN` | [Cloudflare Dashboard](https://dash.cloudflare.com/profile/api-tokens) → Create Token → ต้องมี permission: Workers Scripts, D1, Pages | ทั้งคู่ |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare Dashboard → มุมขวาบนของหน้า Workers | ทั้งคู่ |
+| `D1_DATABASE_ID` | รัน `npx wrangler d1 create wellness-db` → คัดลอก `database_id` | backend |
+| `KV_NAMESPACE_ID` | รัน `npx wrangler kv namespace create CACHE` → คัดลอก `id` | backend |
 | `VITE_BACKEND_URL` | URL ของ Workers หลัง deploy เช่น `https://wellness-backend.yourname.workers.dev` | frontend |
+
+> **หมายเหตุ:** `D1_DATABASE_ID` และ `KV_NAMESPACE_ID` จะถูก inject เข้า `wrangler.jsonc` อัตโนมัติตอน deploy  
+> ไม่ต้องแก้ไข `wrangler.jsonc` ด้วยมือ — ใน repo จะเก็บเป็น placeholder `<REPLACE_WITH_...>` ไว้
 
 Workflow จะ trigger อัตโนมัติเมื่อ push ไป `main`:
 - แก้ไขไฟล์ใน `backend/**` → รัน `deploy-backend.yml`
