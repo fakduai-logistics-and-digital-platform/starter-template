@@ -369,22 +369,124 @@ npx wrangler pages deploy dist --project-name=wellness-frontend --branch=main
 
 ## GitHub Actions — ตั้งค่า Secrets
 
-ไปที่ **GitHub repo → Settings → Secrets and variables → Actions** แล้วเพิ่ม:
-
-| Secret | วิธีหาค่า | ใช้ใน |
-|---|---|---|
-| `CLOUDFLARE_API_TOKEN` | [Cloudflare Dashboard](https://dash.cloudflare.com/profile/api-tokens) → Create Token → ต้องมี permission: Workers Scripts, D1, Pages | ทั้งคู่ |
-| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare Dashboard → มุมขวาบนของหน้า Workers | ทั้งคู่ |
-| `D1_DATABASE_ID` | รัน `npx wrangler d1 create wellness-db` → คัดลอก `database_id` | backend |
-| `KV_NAMESPACE_ID` | รัน `npx wrangler kv namespace create CACHE` → คัดลอก `id` | backend |
-| `VITE_BACKEND_URL` | URL ของ Workers หลัง deploy เช่น `https://wellness-backend.yourname.workers.dev` | frontend |
-
-> **หมายเหตุ:** `D1_DATABASE_ID` และ `KV_NAMESPACE_ID` จะถูก inject เข้า `wrangler.jsonc` อัตโนมัติตอน deploy  
-> ไม่ต้องแก้ไข `wrangler.jsonc` ด้วยมือ — ใน repo จะเก็บเป็น placeholder `<REPLACE_WITH_...>` ไว้
-
 Workflow จะ trigger อัตโนมัติเมื่อ push ไป `main`:
 - แก้ไขไฟล์ใน `backend/**` → รัน `deploy-backend.yml`
 - แก้ไขไฟล์ใน `frontend/**` → รัน `deploy-frontend.yml`
+
+ต้องตั้งค่า Secrets ทั้งหมด **5 ตัว** ที่ GitHub repo ก่อน deploy ถึงจะทำงานได้
+
+### วิธีเพิ่ม Secret ใน GitHub
+
+**GitHub repo → Settings → Secrets and variables → Actions → New repository secret**
+
+---
+
+### Secret 1 — `CLOUDFLARE_API_TOKEN`
+
+ใช้ใน: ทั้ง backend และ frontend
+
+1. ไปที่ [https://dash.cloudflare.com/profile/api-tokens](https://dash.cloudflare.com/profile/api-tokens)
+2. คลิก **Create Token**
+3. เลือก **Create Custom Token**
+4. ตั้งชื่อ เช่น `wellness-deploy`
+5. เพิ่ม Permissions ต่อไปนี้:
+
+   | Account | Cloudflare Pages | Edit |
+   |---|---|---|
+   | Account | Workers Scripts | Edit |
+   | Account | Workers KV Storage | Edit |
+   | Account | D1 | Edit |
+
+6. คลิก **Continue to summary** → **Create Token**
+7. คัดลอก token ที่ได้ → เพิ่มเป็น Secret ชื่อ `CLOUDFLARE_API_TOKEN`
+
+---
+
+### Secret 2 — `CLOUDFLARE_ACCOUNT_ID`
+
+ใช้ใน: ทั้ง backend และ frontend
+
+1. ไปที่ [https://dash.cloudflare.com](https://dash.cloudflare.com)
+2. คลิก **Workers & Pages** จากเมนูซ้าย
+3. มองขวาบน จะเห็น **Account ID** (32 ตัวอักษร)
+4. คัดลอก → เพิ่มเป็น Secret ชื่อ `CLOUDFLARE_ACCOUNT_ID`
+
+---
+
+### Secret 3 — `D1_DATABASE_ID`
+
+ใช้ใน: backend
+
+รันคำสั่งนี้ใน terminal (ต้อง login wrangler ก่อน):
+
+```bash
+npx wrangler d1 create wellness-db
+```
+
+Output:
+```
+✅ Successfully created DB 'wellness-db'
+
+[[d1_databases]]
+binding = "DB"
+database_name = "wellness-db"
+database_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"   ← คัดลอกอันนี้
+```
+
+คัดลอก `database_id` → เพิ่มเป็น Secret ชื่อ `D1_DATABASE_ID`
+
+> Workflow จะ inject ค่านี้เข้า `wrangler.jsonc` อัตโนมัติก่อน deploy  
+> ไม่ต้องแก้ไขไฟล์ใน repo ด้วยมือ
+
+---
+
+### Secret 4 — `KV_NAMESPACE_ID`
+
+ใช้ใน: backend
+
+```bash
+npx wrangler kv namespace create CACHE
+```
+
+Output:
+```
+✅ Successfully created KV namespace 'CACHE'
+
+[[kv_namespaces]]
+binding = "KV"
+id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"   ← คัดลอกอันนี้
+```
+
+คัดลอก `id` → เพิ่มเป็น Secret ชื่อ `KV_NAMESPACE_ID`
+
+> Workflow จะ inject ค่านี้เข้า `wrangler.jsonc` อัตโนมัติก่อน deploy
+
+---
+
+### Secret 5 — `VITE_BACKEND_URL`
+
+ใช้ใน: frontend
+
+ค่านี้จะรู้ได้หลังจาก deploy backend สำเร็จครั้งแรก
+
+1. รัน `npm run deploy` ใน folder `backend/` หรือรอให้ `deploy-backend.yml` ทำงานสำเร็จ
+2. Cloudflare จะแสดง URL ของ Workers เช่น:
+   ```
+   https://wellness-backend.yourname.workers.dev
+   ```
+3. คัดลอก URL นั้น → เพิ่มเป็น Secret ชื่อ `VITE_BACKEND_URL`
+
+---
+
+### สรุป Secrets ทั้งหมด
+
+| Secret | ใช้ใน |
+|---|---|
+| `CLOUDFLARE_API_TOKEN` | backend + frontend |
+| `CLOUDFLARE_ACCOUNT_ID` | backend + frontend |
+| `D1_DATABASE_ID` | backend |
+| `KV_NAMESPACE_ID` | backend |
+| `VITE_BACKEND_URL` | frontend |
 
 ---
 
