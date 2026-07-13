@@ -360,16 +360,28 @@ npm run deploy
 
 ### Frontend → Cloudflare Pages
 
+**ครั้งแรก** ต้อง create Pages project ก่อน 1 ครั้ง (ทำแค่ครั้งเดียว):
+
+```bash
+# ตั้งค่า credentials ก่อน
+export CLOUDFLARE_API_TOKEN=<token ของคุณ>
+export CLOUDFLARE_ACCOUNT_ID=<account id ของคุณ>
+
+# สร้าง project (ทำแค่ครั้งแรกครั้งเดียว)
+npx wrangler pages project create wellness-frontend --production-branch=main
+```
+
+> หรือสร้างผ่าน Cloudflare Dashboard: **Workers & Pages → Create → Pages** แล้วตั้งชื่อว่า `wellness-frontend`
+
+จากนั้น deploy ได้เลย:
+
 ```bash
 cd frontend
 
 # build
 pnpm build
 
-# deploy ครั้งแรก (สร้าง project ใหม่)
-npx wrangler pages deploy dist --project-name=wellness-frontend
-
-# deploy ครั้งถัดไป
+# deploy
 npx wrangler pages deploy dist --project-name=wellness-frontend --branch=main
 ```
 
@@ -377,9 +389,13 @@ npx wrangler pages deploy dist --project-name=wellness-frontend --branch=main
 
 ## GitHub Actions — ตั้งค่า Secrets
 
-Workflow จะ trigger อัตโนมัติเมื่อ push ไป `main`:
-- แก้ไขไฟล์ใน `backend/**` → รัน `deploy-backend.yml`
-- แก้ไขไฟล์ใน `frontend/**` → รัน `deploy-frontend.yml`
+Workflow (`.github/workflows/deploy.yml`) จะ trigger อัตโนมัติเมื่อ push ไป `main` และรันตามลำดับ:
+
+1. **build-backend** และ **build-frontend** รันพร้อมกัน (parallel)
+2. **deploy-backend** รอ build-backend เสร็จก่อน
+3. **deploy-frontend** รอทั้ง build-frontend **และ** deploy-backend เสร็จก่อน
+
+> **สำคัญ:** ต้อง [create Cloudflare Pages project](#frontend--cloudflare-pages) ก่อน 1 ครั้ง มิฉะนั้น deploy-frontend จะ error `Project not found`
 
 ต้องตั้งค่า Secrets ทั้งหมด **5 ตัว** ที่ GitHub repo ก่อน deploy ถึงจะทำงานได้
 
