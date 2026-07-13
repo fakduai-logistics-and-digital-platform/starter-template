@@ -82,20 +82,22 @@ id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 ### 5. สร้าง wrangler.jsonc จาก template
 
-`wrangler.jsonc` ถูก gitignore ไว้ — ต้อง copy จาก example แล้วใส่ค่าที่ได้จากขั้นตอน 3-4:
+`wrangler.jsonc` ถูก gitignore ไว้ (เพื่อป้องกัน ID จริงหลุดขึ้น repo) ต้อง copy จาก example ก่อนเสมอ:
 
 ```bash
 cp wrangler.example.jsonc wrangler.jsonc
 ```
 
-แก้ไข `wrangler.jsonc`:
+**สำหรับ Local Dev เท่านั้น** — ไม่ต้องใส่ค่าอะไรเพิ่ม ใช้ placeholder ได้เลย  
+เพราะ `wrangler dev` จำลอง D1 และ KV ไว้ใน `.wrangler/state/` ในเครื่องให้อัตโนมัติ ไม่ได้ต่อ Cloudflare จริง
+
+**สำหรับ Deploy Remote** — แก้ไข `wrangler.jsonc` ใส่ ID จริงที่ได้จากขั้นตอน 3-4:
 ```jsonc
 "database_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",   // ← จากขั้นตอน 3
 "id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"                   // ← จากขั้นตอน 4
 ```
 
-> `wrangler.jsonc` อยู่ใน `.gitignore` — ไม่ถูก commit ขึ้น repo ทำให้ ID จริงไม่หลุดออกไป  
-> GitHub Actions จะ generate ไฟล์นี้เองจาก Secrets ก่อน deploy
+> GitHub Actions จะ generate `wrangler.jsonc` เองจาก Secrets ก่อน deploy — ไม่ต้องทำอะไรเพิ่ม
 
 ### 6. รัน migration สร้าง tables
 
