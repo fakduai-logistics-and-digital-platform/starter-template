@@ -30,7 +30,7 @@ wellness/
 
 | เครื่องมือ | เวอร์ชัน | ติดตั้ง |
 |---|---|---|
-| Node.js | 20+ | https://nodejs.org |
+| Node.js | 22+ | https://nodejs.org |
 | pnpm | 8.6.2 | `npm i -g pnpm@8.6.2` |
 | Wrangler CLI | 4+ | `npm i -g wrangler` |
 | Cloudflare account | — | https://dash.cloudflare.com/sign-up |
