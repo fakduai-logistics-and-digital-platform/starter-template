@@ -77,11 +77,15 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Deploy
+        id: deploy
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: backend
+
+      - name: Show deployment URL
+        run: echo "✅ Backend deployed to ${{ steps.deploy.outputs.deployment-url }}"
 
   # Optional: deploy the same app to AWS Lambda.
   # Uncomment and set AWS_ROLE_ARN / LAMBDA_FUNCTION_NAME secrets to enable.
