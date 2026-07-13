@@ -1,5 +1,3 @@
-export type GoalType = 'steps' | 'calories' | 'water' | 'sleep' | 'weight'
-
 export interface HealthLog {
   id: string
   userId: string
