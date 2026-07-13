@@ -399,6 +399,10 @@ Workflow จะ trigger อัตโนมัติเมื่อ push ไป `
 4. ตั้งชื่อ Token เช่น `wellness-deploy`
 5. ในส่วน **Permissions** คลิก **Add more** แล้วเพิ่มทีละบรรทัดดังนี้:
 
+<div alight="center">
+<img height="727" alt="image" src="https://github.com/user-attachments/assets/5407855d-2edd-475e-b05f-5c8c895deef5" />
+</div>
+
    ```
    Account  |  Cloudflare Pages       |  Edit
    Account  |  Workers Scripts        |  Edit
@@ -408,11 +412,11 @@ Workflow จะ trigger อัตโนมัติเมื่อ push ไป `
 
    > วิธีเพิ่มแต่ละบรรทัด: dropdown แรกเลือก `Account` → dropdown กลางพิมพ์ชื่อ เช่น `Pages` → dropdown ขวาเลือก `Edit`
 
-6. ในส่วน **Account Resources** เลือก **Include** → **All accounts** (หรือเลือก account ที่ต้องการ)
-7. คลิก **Continue to summary**
-8. ตรวจสอบ permissions แล้วคลิก **Create Token**
-9. **คัดลอก token ทันที** — Cloudflare จะแสดงครั้งเดียวเท่านั้น ถ้าปิดหน้าไปแล้วต้องสร้างใหม่
-10. เพิ่มเป็น Secret ชื่อ `CLOUDFLARE_API_TOKEN`
+7. ในส่วน **Account Resources** เลือก **Include** → **All accounts** (หรือเลือก account ที่ต้องการ)
+8. คลิก **Continue to summary**
+9. ตรวจสอบ permissions แล้วคลิก **Create Token**
+10. **คัดลอก token ทันที** — Cloudflare จะแสดงครั้งเดียวเท่านั้น ถ้าปิดหน้าไปแล้วต้องสร้างใหม่
+11. เพิ่มเป็น Secret ชื่อ `CLOUDFLARE_API_TOKEN`
 
 ---
 
