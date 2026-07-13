@@ -395,18 +395,24 @@ Workflow จะ trigger อัตโนมัติเมื่อ push ไป `
 
 1. ไปที่ [https://dash.cloudflare.com/profile/api-tokens](https://dash.cloudflare.com/profile/api-tokens)
 2. คลิก **Create Token**
-3. เลือก **Create Custom Token**
-4. ตั้งชื่อ เช่น `wellness-deploy`
-5. เพิ่ม Permissions ต่อไปนี้:
+3. เลื่อนลงมาด้านล่าง คลิก **Get started** ใต้หัวข้อ **Create Custom Token**
+4. ตั้งชื่อ Token เช่น `wellness-deploy`
+5. ในส่วน **Permissions** คลิก **Add more** แล้วเพิ่มทีละบรรทัดดังนี้:
 
-   | Account | Cloudflare Pages | Edit |
-   |---|---|---|
-   | Account | Workers Scripts | Edit |
-   | Account | Workers KV Storage | Edit |
-   | Account | D1 | Edit |
+   ```
+   Account  |  Cloudflare Pages       |  Edit
+   Account  |  Workers Scripts        |  Edit
+   Account  |  Workers KV Storage     |  Edit
+   Account  |  D1                     |  Edit
+   ```
 
-6. คลิก **Continue to summary** → **Create Token**
-7. คัดลอก token ที่ได้ → เพิ่มเป็น Secret ชื่อ `CLOUDFLARE_API_TOKEN`
+   > วิธีเพิ่มแต่ละบรรทัด: dropdown แรกเลือก `Account` → dropdown กลางพิมพ์ชื่อ เช่น `Pages` → dropdown ขวาเลือก `Edit`
+
+6. ในส่วน **Account Resources** เลือก **Include** → **All accounts** (หรือเลือก account ที่ต้องการ)
+7. คลิก **Continue to summary**
+8. ตรวจสอบ permissions แล้วคลิก **Create Token**
+9. **คัดลอก token ทันที** — Cloudflare จะแสดงครั้งเดียวเท่านั้น ถ้าปิดหน้าไปแล้วต้องสร้างใหม่
+10. เพิ่มเป็น Secret ชื่อ `CLOUDFLARE_API_TOKEN`
 
 ---
 
