@@ -64,13 +64,7 @@ npx wrangler d1 create wellness-db
 database_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 ```
 
-**สำหรับ Local Dev** — แทนค่าใน `backend/wrangler.jsonc`:
-```jsonc
-"database_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-```
-
-**สำหรับ GitHub Actions** — เพิ่ม Secret ชื่อ `D1_DATABASE_ID` ค่าคือ `database_id` ที่ได้  
-(workflow จะ inject ให้อัตโนมัติก่อน deploy)
+**สำหรับ GitHub Actions** — เพิ่ม Secret ชื่อ `D1_DATABASE_ID` ค่าคือ `database_id` ที่ได้
 
 ### 4. สร้าง KV Namespace
 
@@ -84,14 +78,26 @@ npx wrangler kv namespace create CACHE
 id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 ```
 
-**สำหรับ Local Dev** — แทนค่าใน `backend/wrangler.jsonc`:
-```jsonc
-"id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-```
-
 **สำหรับ GitHub Actions** — เพิ่ม Secret ชื่อ `KV_NAMESPACE_ID` ค่าคือ `id` ที่ได้
 
-### 5. รัน migration สร้าง tables
+### 5. สร้าง wrangler.jsonc จาก template
+
+`wrangler.jsonc` ถูก gitignore ไว้ — ต้อง copy จาก example แล้วใส่ค่าที่ได้จากขั้นตอน 3-4:
+
+```bash
+cp wrangler.example.jsonc wrangler.jsonc
+```
+
+แก้ไข `wrangler.jsonc`:
+```jsonc
+"database_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",   // ← จากขั้นตอน 3
+"id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"                   // ← จากขั้นตอน 4
+```
+
+> `wrangler.jsonc` อยู่ใน `.gitignore` — ไม่ถูก commit ขึ้น repo ทำให้ ID จริงไม่หลุดออกไป  
+> GitHub Actions จะ generate ไฟล์นี้เองจาก Secrets ก่อน deploy
+
+### 6. รัน migration สร้าง tables
 
 ```bash
 # local (สำหรับ dev)
@@ -101,7 +107,7 @@ npm run db:migrate:local
 npm run db:migrate:remote
 ```
 
-### 6. รัน dev server
+### 7. รัน dev server
 
 ```bash
 npm run dev
