@@ -127,13 +127,20 @@ jobs:
           name: frontend-dist
           path: dist
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - name: Deploy to Cloudflare Pages
         id: deploy
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy dist --project-name=wellness-frontend --branch=main
+        run: |
+          OUTPUT=$(npx wrangler pages deploy dist --project-name=wellness-frontend --branch=main 2>&1)
+          echo "$OUTPUT"
+          URL=$(echo "$OUTPUT" | grep -oE 'https://[^ ]+\.pages\.dev[^ ]*' | head -1)
+          echo "deployment-url=$URL" >> $GITHUB_OUTPUT
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Show deployment URL
         run: echo "✅ Frontend deployed to ${{ steps.deploy.outputs.deployment-url }}"
