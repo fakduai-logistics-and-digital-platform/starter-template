@@ -7,9 +7,7 @@ import miscMaskLight from '@images/misc/misc-mask-light.png'
 import tree1 from '@images/misc/tree1.png'
 import tree3 from '@images/misc/tree3.png'
 
-import { storeToRefs } from 'pinia'
 import { VForm } from 'vuetify/components'
-import { useUserStore } from '@/stores/use-user-store'
 
 definePage({
   meta: {
@@ -19,35 +17,20 @@ definePage({
 })
 
 const router = useRouter()
-
 const authThemeMask = useGenerateImageVariant(miscMaskLight, miscMaskDark)
 
-const userStore = useUserStore()
 const isProcessing = ref(false)
-const { loginUser, errorLogin } = storeToRefs(userStore)
 const refLoginForm = ref<VForm>()
-
 const isPasswordVisible = ref(false)
-const isSnackbarVisible = ref(false)
-const timeoutSnackbar = ref(3000)
-const messageSnackbar = ref('')
+const email = ref('')
+const password = ref('')
 
 async function onClickLogin() {
   const isFormValid = await refLoginForm?.value?.validate()
   if (!isFormValid?.valid)
     return
-
-  isProcessing.value = true
-  isSnackbarVisible.value = false
-  await userStore.userLogin()
-  if (errorLogin.value !== undefined) {
-    isSnackbarVisible.value = true
-    messageSnackbar.value = errorLogin.value
-    isProcessing.value = false
-  }
-  else {
-    router.push('/user-page')
-  }
+  // TODO: implement login
+  router.push('/')
 }
 </script>
 
@@ -67,23 +50,12 @@ async function onClickLogin() {
         </p>
       </VCardText>
 
-      <VSnackbar
-        v-model="isSnackbarVisible"
-        :timeout="timeoutSnackbar"
-        color="error"
-        location="bottom center"
-      >
-        <VIcon icon="ri-error-warning-line" />
-        {{ messageSnackbar }}
-      </VSnackbar>
-
       <VCardText>
         <VForm ref="refLoginForm" @submit.prevent="onClickLogin">
           <VRow>
-            <!-- email -->
             <VCol cols="12">
               <VTextField
-                v-model="loginUser.email"
+                v-model="email"
                 autofocus
                 label="Email"
                 type="email"
@@ -92,25 +64,20 @@ async function onClickLogin() {
               />
             </VCol>
 
-            <!-- password -->
             <VCol cols="12">
               <VTextField
-                v-model="loginUser.password"
+                v-model="password"
                 label="Password"
                 placeholder="············"
                 :rules="[requiredValidator]"
                 :type="isPasswordVisible ? 'text' : 'password'"
-                :append-inner-icon="
-                  isPasswordVisible ? 'ri-eye-off-line' : 'ri-eye-line'
-                "
+                :append-inner-icon="isPasswordVisible ? 'ri-eye-off-line' : 'ri-eye-line'"
                 @click:append-inner="isPasswordVisible = !isPasswordVisible"
               />
 
-              <div
-                class="d-flex align-center flex-wrap justify-space-between my-5 gap-4"
-              />
+              <div class="d-flex align-center flex-wrap justify-space-between my-5 gap-4" />
 
-              <VBtn block type="submit">
+              <VBtn block type="submit" :loading="isProcessing">
                 Login
               </VBtn>
             </VCol>

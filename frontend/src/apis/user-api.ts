@@ -1,88 +1,20 @@
-import type {
-  ResponseStandard,
-  UserGetRequestParam,
-  UserLoginRequestBody,
-} from '@/models'
-import { responseHandler } from '@/utils/api-response-handler'
+import type { CreateUserBody, UpdateUserBody, User, UserListResponse, UserResponse } from '@/models'
 
-export async function postUserLogin(
-  requestData: UserLoginRequestBody,
-): Promise<ResponseStandard | undefined> {
-  const requestBody = requestData
-  const { data, response } = await useApi('/user/login', {
-    method: 'POST',
-    body: JSON.stringify(requestBody),
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${import.meta.env.VITE_API_AUTH_KEY}`,
-    },
-  })
+const BASE = `${import.meta.env.VITE_BACKEND_URL}/api/v1/users`
 
-  const result: ResponseStandard = await responseHandler(data, response.value)
-  return result
+async function request<T>(url: string, init?: RequestInit): Promise<T> {
+  const res = await fetch(url, { headers: { 'Content-Type': 'application/json' }, ...init })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}))
+    throw new Error(err?.error?.message ?? `HTTP ${res.status}`)
+  }
+  return res.json()
 }
 
-export async function getUsers(
-  request: UserGetRequestParam,
-  token: string,
-): Promise<ResponseStandard> {
-  const queryParams = new URLSearchParams()
-
-  if (request.page !== undefined)
-    queryParams.append('page', request.page.toString())
-
-  if (request.pageSize !== undefined)
-    queryParams.append('pageSize', request.pageSize.toString())
-
-  const { data, response } = await useApi(`/users?${queryParams}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
-  })
-
-  const result: ResponseStandard = await responseHandler(data, response.value)
-  return result
-}
-
-// DummyJSON API - Get Users
-export async function getDummyUsers(
-  params?: UserGetRequestParam,
-): Promise<ResponseStandard> {
-  const baseUrl = import.meta.env.VITE_API_BASE_URL
-  const queryParams = new URLSearchParams()
-
-  if (params?.limit)
-    queryParams.append('limit', params.limit.toString())
-  if (params?.skip)
-    queryParams.append('skip', params.skip.toString())
-
-  const url = `${baseUrl}/users${queryParams.toString() ? `?${queryParams}` : ''}`
-
-  try {
-    const response = await fetch(url)
-    const data = await response.json()
-
-    if (response.ok) {
-      return {
-        ok: true,
-        data,
-        error: undefined,
-      }
-    }
-    else {
-      return {
-        ok: false,
-        data: undefined,
-        error: data.message || 'Failed to fetch users',
-      }
-    }
-  }
-  catch (error) {
-    return {
-      ok: false,
-      data: undefined,
-      error: error instanceof Error ? error.message : 'Unknown error occurred',
-    }
-  }
+export const userApi = {
+  list: () => request<UserListResponse>(BASE),
+  get: (id: string) => request<UserResponse>(`${BASE}/${id}`),
+  create: (body: CreateUserBody) => request<UserResponse>(BASE, { method: 'POST', body: JSON.stringify(body) }),
+  update: (id: string, body: UpdateUserBody) => request<UserResponse>(`${BASE}/${id}`, { method: 'PATCH', body: JSON.stringify(body) }),
+  remove: (id: string) => request<void>(`${BASE}/${id}`, { method: 'DELETE' }),
 }

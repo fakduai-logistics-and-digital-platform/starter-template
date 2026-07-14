@@ -1,67 +1,44 @@
 import { defineStore } from 'pinia'
-import {
-  getDummyUsers,
-  getUsers,
-  postUserLogin,
-} from '@/apis/user-api'
+import { userApi } from '@/apis/user-api'
+import type { CreateUserBody, UpdateUserBody, User } from '@/models'
 
-import type {
-  UserGetRequestParam,
-  UserGetResponseData,
-  UserLoggedInData,
-  UserLoginRequestBody,
-} from '@/models'
+export const useUserStore = defineStore('UserStore', () => {
+  const users = ref<User[]>([])
+  const isLoading = ref(false)
+  const error = ref<string | null>(null)
 
-export const useUserStore = defineStore('UserStore', {
-  state: () => ({
-    loginUser: {} as UserLoginRequestBody,
-    loggendInUser: {} as UserLoggedInData,
-    errorLogin: '' as string | undefined,
-    getUserParam: {} as UserGetRequestParam,
-    dataUsers: {} as UserGetResponseData | undefined,
-    errorGetUsers: '' as string | undefined,
-    // DummyJSON API state
-    dummyUsers: {} as UserGetResponseData | undefined,
-    errorGetDummyUsers: '' as string | undefined,
-  }),
-  persist: true,
-  actions: {
-    async userLogin() {
-      this.errorLogin = undefined
-      const apiResponse = await postUserLogin(this.loginUser)
-      if (apiResponse !== undefined) {
-        if (apiResponse.ok === true) {
-          this.loggendInUser = {
-            email: this.loginUser.email,
-            token: apiResponse.data,
-          } as UserLoggedInData
-        }
-        else {
-          this.errorLogin = apiResponse.error
-        }
-      }
-    },
-    async userGers() {
-      const apiResponse = await getUsers(this.getUserParam, this.loggendInUser.token)
-      if (apiResponse !== undefined) {
-        if (apiResponse.ok === true)
-          this.dataUsers = apiResponse.data as UserGetResponseData
+  async function fetchUsers() {
+    isLoading.value = true
+    error.value = null
+    try {
+      const res = await userApi.list()
+      users.value = res.data
+    }
+    catch (e: any) {
+      error.value = e.message
+    }
+    finally {
+      isLoading.value = false
+    }
+  }
 
-        else
-          this.errorGetUsers = apiResponse.error
-      }
-    },
-    // DummyJSON API - Get Users
-    async fetchDummyUsers(params?: UserGetRequestParam) {
-      this.errorGetDummyUsers = undefined
-      const apiResponse = await getDummyUsers(params)
-      if (apiResponse !== undefined) {
-        if (apiResponse.ok === true)
-          this.dummyUsers = apiResponse.data as UserGetResponseData
+  async function createUser(body: CreateUserBody) {
+    const res = await userApi.create(body)
+    users.value.unshift(res.data)
+    return res.data
+  }
 
-        else
-          this.errorGetDummyUsers = apiResponse.error
-      }
-    },
-  },
+  async function updateUser(id: string, body: UpdateUserBody) {
+    const res = await userApi.update(id, body)
+    const idx = users.value.findIndex(u => u.id === id)
+    if (idx !== -1) users.value[idx] = res.data
+    return res.data
+  }
+
+  async function deleteUser(id: string) {
+    await userApi.remove(id)
+    users.value = users.value.filter(u => u.id !== id)
+  }
+
+  return { users, isLoading, error, fetchUsers, createUser, updateUser, deleteUser }
 })

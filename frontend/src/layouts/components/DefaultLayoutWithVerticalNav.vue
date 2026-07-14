@@ -7,7 +7,6 @@ import navItems from '@/navigation/vertical'
 // Components
 import Footer from '@/layouts/components/Footer.vue'
 import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue'
-import UserProfile from '@/layouts/components/UserProfile.vue'
 
 // @layouts plugin
 
@@ -46,7 +45,6 @@ watch([isFallbackStateActive, refLoadingIndicator], () => {
           :languages="themeConfig.app.i18n.langConfig"
         />
         <NavbarThemeSwitcher />
-        <UserProfile />
       </div>
     </template>
 
