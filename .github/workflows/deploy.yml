@@ -135,7 +135,7 @@ jobs:
           node-version: 22
 
       - name: Create Pages project if not exists
-        run: npx wrangler pages project create wellness-template-app --production-branch=main 2>&1 || true
+        run: npx wrangler pages project create ${{ secrets.PAGES_PROJECT_NAME }} --production-branch=main 2>&1 || true
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -143,10 +143,10 @@ jobs:
       - name: Deploy to Cloudflare Pages
         run: |
           set -o pipefail
-          npx wrangler pages deploy dist --project-name=wellness-template-app --branch=main 2>&1
+          npx wrangler pages deploy dist --project-name=${{ secrets.PAGES_PROJECT_NAME }} --branch=main 2>&1
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Show deployment URL
-        run: echo "✅ Frontend deployed to https://wellness-template-app.pages.dev"
+        run: echo "✅ Frontend deployed to https://${{ secrets.PAGES_PROJECT_NAME }}.pages.dev"
