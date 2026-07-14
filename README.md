@@ -368,10 +368,10 @@ export CLOUDFLARE_API_TOKEN=<token ของคุณ>
 export CLOUDFLARE_ACCOUNT_ID=<account id ของคุณ>
 
 # สร้าง project (ทำแค่ครั้งแรกครั้งเดียว)
-npx wrangler pages project create wellness-frontend --production-branch=main
+npx wrangler pages project create wellness-template-app --production-branch=main
 ```
 
-> หรือสร้างผ่าน Cloudflare Dashboard: **Workers & Pages → Create → Pages** แล้วตั้งชื่อว่า `wellness-frontend`
+> หรือสร้างผ่าน Cloudflare Dashboard: **Workers & Pages → Create → Pages** แล้วตั้งชื่อว่า `wellness-template-app`
 
 จากนั้น deploy ได้เลย:
 
@@ -382,7 +382,7 @@ cd frontend
 pnpm build
 
 # deploy
-npx wrangler pages deploy dist --project-name=wellness-frontend --branch=main
+npx wrangler pages deploy dist --project-name=wellness-template-app --branch=main
 ```
 
 ---
