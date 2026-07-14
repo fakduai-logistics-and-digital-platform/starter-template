@@ -358,9 +358,7 @@ npm run db:migrate:remote
 npm run deploy
 ```
 
-### Frontend → Cloudflare Workers Static Assets
-
-Frontend deploy เป็น Cloudflare Worker ใช้ Static Assets ไม่ต้องสร้าง project ล่วงหน้า wrangler จัดการให้อัตโนมัติ:
+### Frontend → Cloudflare Pages
 
 ```bash
 cd frontend
@@ -368,11 +366,11 @@ cd frontend
 # build
 pnpm build
 
-# deploy (ใช้ wrangler.jsonc ที่อยู่ใน frontend/)
-npx wrangler deploy
+# deploy
+npx wrangler pages deploy dist --project-name=wellness-template-app --branch=main
 ```
 
-URL หลัง deploy: `https://wallness-frontend.lab-fakduai.workers.dev`
+URL หลัง deploy: `https://wellness-template-app.pages.dev`
 
 ---
 
