@@ -134,9 +134,9 @@ jobs:
       - name: Deploy to Cloudflare Pages
         id: deploy
         run: |
-          OUTPUT=$(npx wrangler pages deploy dist --project-name=wellness-frontend --branch=main 2>&1)
-          echo "$OUTPUT"
-          URL=$(echo "$OUTPUT" | grep -oE 'https://[^ ]+\.pages\.dev[^ ]*' | head -1)
+          set -o pipefail
+          npx wrangler pages deploy dist --project-name=wellness-frontend --branch=main 2>&1 | tee /tmp/wrangler-out.txt
+          URL=$(grep -oE 'https://[^ ]+\.pages\.dev[^ ]*' /tmp/wrangler-out.txt | head -1)
           echo "deployment-url=$URL" >> $GITHUB_OUTPUT
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
