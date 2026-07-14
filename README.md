@@ -358,22 +358,9 @@ npm run db:migrate:remote
 npm run deploy
 ```
 
-### Frontend → Cloudflare Pages
+### Frontend → Cloudflare Workers Static Assets
 
-**ครั้งแรก** ต้อง create Pages project ก่อน 1 ครั้ง (ทำแค่ครั้งเดียว):
-
-```bash
-# ตั้งค่า credentials ก่อน
-export CLOUDFLARE_API_TOKEN=<token ของคุณ>
-export CLOUDFLARE_ACCOUNT_ID=<account id ของคุณ>
-
-# สร้าง project (ทำแค่ครั้งแรกครั้งเดียว)
-npx wrangler pages project create wellness-template-app --production-branch=main
-```
-
-> หรือสร้างผ่าน Cloudflare Dashboard: **Workers & Pages → Create → Pages** แล้วตั้งชื่อว่า `wellness-template-app`
-
-จากนั้น deploy ได้เลย:
+Frontend deploy เป็น Cloudflare Worker ใช้ Static Assets ไม่ต้องสร้าง project ล่วงหน้า wrangler จัดการให้อัตโนมัติ:
 
 ```bash
 cd frontend
@@ -381,9 +368,11 @@ cd frontend
 # build
 pnpm build
 
-# deploy
-npx wrangler pages deploy dist --project-name=wellness-template-app --branch=main
+# deploy (ใช้ wrangler.jsonc ที่อยู่ใน frontend/)
+npx wrangler deploy
 ```
+
+URL หลัง deploy: `https://wallness-frontend.lab-fakduai.workers.dev`
 
 ---
 
