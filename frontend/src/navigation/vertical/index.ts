@@ -25,9 +25,4 @@ export default [
     to: { name: 'user-page' },
     icon: { icon: 'ri-user-3-line' },
   },
-  {
-    title: 'Products',
-    to: { name: 'product-page' },
-    icon: { icon: 'ri-shopping-bag-3-line' },
-  },
 ]
