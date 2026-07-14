@@ -358,7 +358,7 @@ npm run db:migrate:remote
 npm run deploy
 ```
 
-### Frontend → Cloudflare Workers Static Assets
+### Frontend → Cloudflare Pages
 
 ```bash
 cd frontend
@@ -367,12 +367,10 @@ cd frontend
 pnpm build
 
 # deploy
-npx wrangler deploy
+npx wrangler pages deploy dist --project-name=wellness-template-app --branch=main
 ```
 
-URL หลัง deploy: `https://wallness-frontend.lab-fakduai.workers.dev`
-
-> `not_found_handling: single-page-application` ใน `wrangler.jsonc` ทำให้ Vue Router history mode ทำงานได้ถูกต้อง — refresh หรือเข้า URL ตรงจะ fallback มาที่ `index.html` แทนที่จะได้ 404
+URL หลัง deploy: `https://wellness-template-app.pages.dev`
 
 ---
 
