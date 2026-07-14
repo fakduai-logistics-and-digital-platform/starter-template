@@ -5,6 +5,8 @@ const BASE = `${import.meta.env.VITE_BACKEND_URL ?? 'http://localhost:8787'}/api
 async function request<T>(url: string, options?: RequestInit): Promise<{ ok: true; data: T } | { ok: false; error: string }> {
   try {
     const res = await fetch(url, { headers: { 'Content-Type': 'application/json' }, ...options })
+    const isJson = res.headers.get('content-type')?.includes('application/json')
+    if (!isJson) return { ok: false, error: 'Backend returned non-JSON. Check VITE_BACKEND_URL.' }
     const json = await res.json()
     if (res.ok) return { ok: true, data: json.data as T }
     return { ok: false, error: json.error?.message ?? 'Request failed' }
