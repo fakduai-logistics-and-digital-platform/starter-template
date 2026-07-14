@@ -107,11 +107,14 @@ jobs:
 
       - name: Deploy
         id: deploy
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: backend
+        run: |
+          set -o pipefail
+          ./node_modules/.bin/wrangler deploy 2>&1 | tee /tmp/wrangler-out.txt
+          URL=$(grep -oE 'https://[^ ]+\.workers\.dev[^ ]*' /tmp/wrangler-out.txt | head -1)
+          echo "deployment-url=$URL" >> $GITHUB_OUTPUT
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Show deployment URL
         run: echo "✅ Backend deployed to ${{ steps.deploy.outputs.deployment-url }}"
