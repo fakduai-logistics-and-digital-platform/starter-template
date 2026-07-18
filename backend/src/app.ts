@@ -30,19 +30,15 @@ export function createApp(containerFactory: (env: Partial<Bindings>) => Containe
     openAPIRouteHandler(app, {
       documentation: {
         info: {
-          title: 'Wellness API',
+          title: 'Starter API',
           version: '1.0.0',
           description: 'Hono backend running on Cloudflare Workers (D1 + KV) and AWS Lambda',
         },
-        tags: [
-          { name: 'Users', description: 'User management' },
-          { name: 'HealthLogs', description: 'Daily health metric tracking' },
-          { name: 'Goals', description: 'Wellness goal tracking' },
-        ],
+        tags: [{ name: 'Users', description: 'User management' }],
       },
     })
   )
-  app.get('/docs', Scalar({ url: '/openapi.json', pageTitle: 'Wellness API Docs' }))
+  app.get('/docs', Scalar({ url: '/openapi.json', pageTitle: 'Starter API Docs' }))
 
   app.notFound((c) => c.json({ error: { code: 'NOT_FOUND', message: 'Route not found' } }, 404))
 

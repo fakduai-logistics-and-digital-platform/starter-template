@@ -1,21 +1,11 @@
 export default [
   {
-    heading: 'Wellness',
+    heading: 'Main',
   },
   {
     title: 'Dashboard',
     to: { name: 'root' },
     icon: { icon: 'ri-home-line' },
-  },
-  {
-    title: 'Health Logs',
-    to: { name: 'health-log-page' },
-    icon: { icon: 'ri-heart-pulse-line' },
-  },
-  {
-    title: 'Goals',
-    to: { name: 'goal-page' },
-    icon: { icon: 'ri-flag-line' },
   },
   {
     heading: 'Admin',

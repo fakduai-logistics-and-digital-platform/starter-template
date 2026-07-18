@@ -1,4 +1,4 @@
-# Wellness Backend — Agent Guide
+# Starter Backend — Agent Guide
 
 Hono backend with clean architecture. One codebase, two runtimes: Cloudflare Workers (D1 + KV) and AWS Lambda (in-memory repositories for now).
 

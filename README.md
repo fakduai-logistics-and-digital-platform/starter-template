@@ -1,7 +1,7 @@
-# Wellness — Full-Stack Template
+# Starter Template — Full-Stack
 
 Template สำหรับนักศึกษาที่อยากเรียนรู้การพัฒนา Full-Stack Web Application ตั้งแต่ต้น
-ใช้เป็นฐานในการต่อยอดโปรเจกต์ได้เลย ระบบตัวอย่างคือ Health Logs + Goals Tracking
+ใช้เป็นฐานในการต่อยอดโปรเจกต์ได้เลย มี Users Management เป็นตัวอย่าง Resource พร้อม Clean Architecture ครบชุด
 
 **Tech Stack**
 
@@ -24,6 +24,31 @@ starter-template/
 ├── backend/                 # Hono API (Cloudflare Workers)
 └── frontend/                # Vue 3 + Vuetify SPA
 ```
+
+---
+
+## เริ่มใช้ Template นี้
+
+มีสองวิธี:
+
+**1. ดาวน์โหลด ZIP** (แนะนำ — ไม่ต้องลบ `.git`)
+
+ไปที่ GitHub → กด **Code → Download ZIP** → แตกไฟล์แล้วใช้งานได้เลย ไม่มี `.git` ติดมาด้วย
+
+**2. git clone**
+
+```bash
+git clone <repo-url> my-project
+cd my-project
+
+# ลบ .git ของ template ออก แล้วเริ่ม git ใหม่เป็นของตัวเอง
+rm -rf .git
+git init
+git add .
+git commit -m "initial commit"
+```
+
+> ถ้า clone แล้วไม่ลบ `.git` จะ push ขึ้น repo ตัวเองไม่ได้ เพราะ remote ยังชี้ไปที่ repo ต้นฉบับอยู่
 
 ---
 
@@ -267,30 +292,18 @@ Request → Router (validate) → Handler (parse) → Service (logic) → Reposi
 | GET | `/api/v1/users/:id` | ดู user (cached 5 นาที) |
 | PATCH | `/api/v1/users/:id` | แก้ไข user |
 | DELETE | `/api/v1/users/:id` | ลบ user |
-| GET | `/api/v1/health-logs` | รายการ health logs |
-| POST | `/api/v1/health-logs` | บันทึก health log รายวัน |
-| GET | `/api/v1/health-logs/user/:userId` | health logs ของ user |
-| GET | `/api/v1/health-logs/:id` | ดู health log |
-| PATCH | `/api/v1/health-logs/:id` | แก้ไข health log |
-| DELETE | `/api/v1/health-logs/:id` | ลบ health log |
-| GET | `/api/v1/goals` | รายการ goals |
-| POST | `/api/v1/goals` | สร้าง goal |
-| GET | `/api/v1/goals/user/:userId` | goals ของ user |
-| GET | `/api/v1/goals/:id` | ดู goal |
-| PATCH | `/api/v1/goals/:id` | อัปเดต goal / เปลี่ยน status |
-| DELETE | `/api/v1/goals/:id` | ลบ goal |
 
-### เพิ่ม Resource ใหม่ (เช่น `meals`)
+### เพิ่ม Resource ใหม่ (เช่น `bookings`)
 
-ทำตามลำดับนี้:
+ดู `user` files เป็น template แล้วทำตามลำดับ:
 
-1. `src/domain/entities/meal.ts`
-2. `src/domain/repositories/meal-repository.ts`
-3. `src/infrastructure/d1/d1-meal-repository.ts` + `src/infrastructure/memory/memory-meal-repository.ts`
-4. `src/services/meal-service.ts`
-5. `src/handlers/meal-handler.ts`
-6. `src/schemas/meal-schemas.ts` + `src/routers/meal-router.ts`
-7. `migrations/0004_create_meals.sql`
+1. `src/domain/entities/booking.ts`
+2. `src/domain/repositories/booking-repository.ts`
+3. `src/infrastructure/d1/d1-booking-repository.ts` + `src/infrastructure/memory/memory-booking-repository.ts`
+4. `src/services/booking-service.ts`
+5. `src/handlers/booking-handler.ts`
+6. `src/schemas/booking-schemas.ts` + `src/routers/booking-router.ts`
+7. `migrations/0002_create_bookings.sql`
 8. เพิ่มใน `src/di/container.ts`, `src/routers/index.ts`, `src/server.ts`, `src/lambda.ts`
 9. `npm run db:migrate:local`
 
@@ -302,8 +315,6 @@ Request → Router (validate) → Handler (parse) → Service (logic) → Reposi
 frontend/src/
 ├── pages/             # File-based routing (vite-plugin-vue-router)
 │   ├── index.vue      # / → Dashboard
-│   ├── health-log-page.vue
-│   ├── goal-page.vue
 │   ├── user-page.vue
 │   ├── login.vue
 │   └── [...error].vue
@@ -324,12 +335,14 @@ frontend/src/
 Page (Vue SFC) → Store (Pinia) → API function (fetch) → Backend /api/v1/...
 ```
 
-### เพิ่มหน้าใหม่ (เช่น `meals`)
+### เพิ่มหน้าใหม่ (เช่น `bookings`)
 
-1. `src/models/meal.ts` — TypeScript interfaces
-2. `src/apis/meal-api.ts` — fetch functions
-3. `src/stores/use-meal-store.ts` — Pinia store
-4. `src/pages/meal-page.vue` — route สร้างอัตโนมัติจากชื่อไฟล์
+ดู `user` files เป็น template แล้วทำตามลำดับ:
+
+1. `src/models/booking.ts` — TypeScript interfaces
+2. `src/apis/booking-api.ts` — fetch functions
+3. `src/stores/use-booking-store.ts` — Pinia store
+4. `src/pages/booking-page.vue` — route สร้างอัตโนมัติจากชื่อไฟล์
 5. เพิ่มเมนูใน `src/navigation/vertical/index.ts`
 
 ---
